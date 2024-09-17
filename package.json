@@ -11,7 +11,7 @@
     "start": "node dist/app.js",
     "build": "tsc",
     "postinstall": "npm run build",
-    "local": "nodemon app.ts"
+    "local": "tsc && nodemon dist/app.js"
   },
   "keywords": [
     "mono"

@@ -11,7 +11,7 @@ const server = http.createServer((req, res) => {
         serveFile('interactions.txt', res);
     } else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.end('file not Found');
+        res.end('File not Found');
     }
 });
 
@@ -25,29 +25,41 @@ wss.on('connection', (ws: WebSocket) => {
 });
 
 const processEvent = (event: { type: string, data: string }) => {
+    const errorFilePath = path.join(__dirname, '../errors.txt');
+    const interactionFilePath = path.join(__dirname, '../interactions.txt');
+
     if (event.type === 'event.error') {
-        fs.appendFileSync('errors.txt', `${event.data}\n`);
+        fs.appendFileSync(errorFilePath, `${event.data}\n`);
     } else if (event.type === 'event.interaction') {
-        console.log('hi')
-        fs.appendFileSync('interactions.txt', `${event.data}\n`);
+        fs.appendFileSync(interactionFilePath, `${event.data}\n`);
     }
-}
+};
 
 const serveFile = (filename: string, res: http.ServerResponse) => {
-    const filePath = path.join(__dirname, filename);
+    const filePath = path.join(__dirname, '../', filename);
     fs.readFile(filePath, 'utf8', (err, data) => {
         if (err) {
             res.writeHead(500, { 'Content-Type': 'text/plain' });
-            res.end('internal server error');
+            res.end('Internal Server Error');
         } else {
             res.writeHead(200, { 'Content-Type': 'text/plain' });
             res.end(data);
         }
     });
-}
+};
+
+const createFileIfNotExists = (filename: string) => {
+    const filePath = path.join(__dirname, '../', filename);
+    if (!fs.existsSync(filePath)) {
+        fs.writeFileSync(filePath, '', 'utf8');
+    }
+};
 
 const port = process.env.PORT || 8080;
 
+createFileIfNotExists('errors.txt');
+createFileIfNotExists('interactions.txt');
+
 server.listen(port, () => {
-    console.log(`server is running on port: ${port}`);
+    console.log(`Server is running on port: ${port}`);
 });
