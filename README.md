@@ -31,7 +31,8 @@ A websocket that recieves and processes events
 
 1. **Run the application**:
    ```bash
-   node app.ts
+   npm run build
+   npm start
    ```
 
    Alternatively, you can use `nodemon` to automatically restart the server when changes are made:
